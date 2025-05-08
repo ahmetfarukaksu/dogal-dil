@@ -8,9 +8,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Dify Chatbot',
+      title: 'DogaL Dil Chatbot',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: ChatScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -109,34 +110,83 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF6F7FB),
       appBar: AppBar(
-        title: Text('Dify Chatbot'),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.chat_bubble_outline, color: Colors.blue),
+            SizedBox(width: 8),
+            Text('Dogal Dil Chatbot', style: TextStyle(color: Colors.blue[800], fontWeight: FontWeight.bold)),
+          ],
+        ),
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.blue[800]),
       ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(16.0),
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
                 final isUser = message['sender'] == 'user';
-                return Align(
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                    padding: EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: isUser ? Colors.blue[100] : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12.0),
+                return Row(
+                  mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (!isUser)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.blue[100],
+                          child: Icon(Icons.smart_toy, color: Colors.blue[800]),
+                          radius: 18,
+                        ),
+                      ),
+                    Flexible(
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 6.0),
+                        padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
+                        decoration: BoxDecoration(
+                          color: isUser ? Colors.blue[600] : Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                            bottomLeft: Radius.circular(isUser ? 20 : 4),
+                            bottomRight: Radius.circular(isUser ? 4 : 20),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          message['text']!,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: isUser ? Colors.white : Colors.blueGrey[900],
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Text(
-                      message['text']!,
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                  ),
+                    if (isUser)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.blue[600],
+                          child: Icon(Icons.person, color: Colors.white),
+                          radius: 18,
+                        ),
+                      ),
+                  ],
                 );
               },
             ),
@@ -146,8 +196,18 @@ class _ChatScreenState extends State<ChatScreen> {
               padding: EdgeInsets.all(8.0),
               child: CircularProgressIndicator(),
             ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 8,
+                  offset: Offset(0, -2),
+                ),
+              ],
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -155,17 +215,28 @@ class _ChatScreenState extends State<ChatScreen> {
                     controller: _controller,
                     decoration: InputDecoration(
                       hintText: 'Mesaj yaz...',
+                      filled: true,
+                      fillColor: Color(0xFFF6F7FB),
+                      contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(24.0),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                     onSubmitted: (_) => _sendMessage(),
                   ),
                 ),
-                SizedBox(width: 8.0),
-                IconButton(
-                  icon: Icon(Icons.send, color: Colors.blue),
-                  onPressed: _sendMessage,
+                SizedBox(width: 10.0),
+                GestureDetector(
+                  onTap: _sendMessage,
+                  child: Container(
+                    padding: EdgeInsets.all(14.0),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[600],
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.send, color: Colors.white),
+                  ),
                 ),
               ],
             ),
@@ -180,5 +251,5 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
+  }
 }
